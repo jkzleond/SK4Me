@@ -1,12 +1,12 @@
 # ScrapyKeeper
 
-[![Latest Version](http://img.shields.io/pypi/v/SpiderKeeper.svg)](https://pypi.python.org/pypi/SpiderKeeper)
+[![Latest Versiond](http://img.shields.io/pypi/v/SpiderKeeper.svg)](https://pypi.python.org/pypi/SpiderKeeper)
 [![Python Versions](http://img.shields.io/pypi/pyversions/SpiderKeeper.svg)](https://pypi.python.org/pypi/SpiderKeeper)
 [![The MIT License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/DormyMo/SpiderKeeper/blob/master/LICENSE)
    
 A scalable admin ui for scrapy spider service 
 
-ScrapyKeeeper is a fork of [SpiderKeeper](https://github.com/DormyMo/SpiderKeeper)
+SK4Me is a fork of [ScrapyKeeper](https://github.com/fliot/ScrapyKeeper)
 
 Forked to provide:
   - Enhanced statistics (Errors, Exceptions, Retries...)
@@ -23,15 +23,15 @@ Forked to provide:
 How to install ?
 ```sh
 git clone https://github.com/fliot/ScrapyKeeper.git
-cd ScrapyKeeper
+cd SK4Me
 pip install .
 ```
 
 Running:
 ```sh
-scrapykeeper -h
+sk4me -h
 
-Usage: scrapykeeper [options]
+Usage: sk4me [options]
 
 Admin ui for scrapy spider service
 

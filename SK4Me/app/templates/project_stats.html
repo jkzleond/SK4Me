@@ -6,7 +6,7 @@
 
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">Working Time last 24h</h3>
@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-12">
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">Last Runs</h3>
@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-12">
         <div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">Quality Review %</h3>
@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="col-md-4">
+    <div class="col-md-12">
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">Last Errors and Exceptions</h3>
@@ -66,7 +66,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">History</h3>
@@ -94,7 +94,7 @@
     }
     
     {% for item in spider %}
-    var color{{ item.spider_name }} = getRandomColor();
+    var color{{ item.spider_name | normalize_name }} = getRandomColor();
     {% endfor %}
     var color = Chart.helpers.color;
     
@@ -109,7 +109,7 @@
                 data: [{% for item in working_time.values() %} '{{ item }}', {% endfor %}],
                 backgroundColor: [
                     {% for item in working_time.keys() %}
-                    color(color{{ item }}).alpha(0.5).rgbString(),
+                    color(color{{ item | normalize_name }}).alpha(0.5).rgbString(),
                     {% endfor %}
                 ],
             }],
@@ -140,7 +140,7 @@
     var barChartData = {
         labels: [{% for item in last_run %} '{{ item.start_time }}', {% endfor %}],
         datasets: [{
-            backgroundColor: [{% for item in last_run %} color(color{{ item.job_instance.spider_name }}).alpha(0.5).rgbString(), {% endfor %}],
+            backgroundColor: [{% for item in last_run %} color(color{{ item.job_instance.spider_name | normalize_name }}).alpha(0.5).rgbString(), {% endfor %}],
             yAxisID: 'y-axis-1',
             data: [{% for item in last_run %} '{{ item.items_count }}', {% endfor %}]
         }]
@@ -157,9 +157,9 @@
                         {% for item in quality_review.keys() %}
                             {
                                 label: '{{ item }}',
-                                backgroundColor: color(color{{ item }}).alpha(0.5).rgbString(),
-                                borderColor: color(color{{ item }}).rgbString(),
-                                pointBackgroundColor: color(color{{ item }}).rgbString(),
+                                backgroundColor: color(color{{ item | normalize_name }}).alpha(0.5).rgbString(),
+                                borderColor: color(color{{ item | normalize_name }}).rgbString(),
+                                pointBackgroundColor: color(color{{ item | normalize_name }}).rgbString(),
                                 data: [{{ quality_review[item][0] }}, {{ quality_review[item][1] }}, {{ quality_review[item][2] }}, {{ quality_review[item][3] }}, {{ quality_review[item][4] }}, {{ quality_review[item][5] }}]
                             },
                         {% endfor %}
@@ -248,14 +248,28 @@
             type: 'bar',
             data: {
                 labels: [{% for item in run_stats %} '{{ item.key }}', {% endfor %}],
-                datasets: [{
-                    data: [{% for item in run_stats %} {{ item.value }}, {% endfor %}],
-                    type: 'bar',
-                    pointRadius: 0,
-                    fill: false,
-                    lineTension: 0,
-                    borderWidth: 2
-                }]
+                datasets: [
+                    {
+                        label: 'items',
+                        backgroundColor: '#f0c27e',
+                        data: [{% for item in run_stats %} {{ item.value.items_count }}, {% endfor %}],
+                        type: 'bar',
+                        pointRadius: 0,
+                        fill: false,
+                        lineTension: 0,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'spiders',
+                        backgroundColor: '#5bcbf0',
+                        data: [{% for item in run_stats %} {{ item.value.spiders_count }}, {% endfor %}],
+                        type: 'bar',
+                        pointRadius: 0,
+                        fill: false,
+                        lineTension: 0,
+                        borderWidth: 2
+                    }
+                ]
             },
             options: {
                 legend: {

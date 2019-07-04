@@ -1,2 +1,2 @@
-recursive-include ScrapyKeeper/app/templates *
-recursive-include ScrapyKeeper/app/static *
+recursive-include SK4Me/app/templates *
+recursive-include SK4Me/app/static *

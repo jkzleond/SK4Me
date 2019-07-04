@@ -7,16 +7,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask import jsonify
 from flask_basicauth import BasicAuth
-from flask_restful import Api
-from flask_restful_swagger import swagger
+
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import HTTPException
 
-import ScrapyKeeper
-from ScrapyKeeper import config
+import SK4Me
+from SK4Me import config
+from .app import app
 
-# Define the WSGI application object
-app = Flask(__name__)
+
 # Configurations
 app.config.from_object(config)
 
@@ -29,9 +28,6 @@ handler.setFormatter(formatter)
 app.logger.setLevel(app.config.get('LOG_LEVEL', "INFO"))
 app.logger.addHandler(handler)
 
-# swagger
-api = swagger.docs(Api(app), apiVersion=ScrapyKeeper.__version__, api_spec_url="/api",
-                   description='ScrapyKeeper')
 # Define the database object which is imported
 # by modules and controllers
 db = SQLAlchemy(app, session_options=dict(autocommit=False, autoflush=True))
@@ -43,6 +39,7 @@ def teardown_request(exception):
         db.session.rollback()
         db.session.remove()
     db.session.remove()
+
 
 # Define apscheduler
 scheduler = BackgroundScheduler()
@@ -78,7 +75,7 @@ def handle_error(e):
 
 
 # Build the database:
-from ScrapyKeeper.app.spider.model import *
+from SK4Me.app.spider.model import *
 
 
 def init_database():
@@ -87,8 +84,8 @@ def init_database():
 
 
 # regist spider service proxy
-from ScrapyKeeper.app.proxy.spiderctrl import SpiderAgent
-from ScrapyKeeper.app.proxy.contrib.scrapy import ScrapydProxy
+from SK4Me.app.proxy.spiderctrl import SpiderAgent
+from SK4Me.app.proxy.contrib.scrapy import ScrapydProxy
 
 agent = SpiderAgent()
 
@@ -99,13 +96,14 @@ def regist_server():
             agent.regist(ScrapydProxy(server))
 
 
-from ScrapyKeeper.app.spider.controller import api_spider_bp
-
+from SK4Me.app.spider.controller import api, api_spider_bp, ui_bp
+from SK4Me.app.spider import filters
+api.init_app(app)
 # Register blueprint(s)
-app.register_blueprint(api_spider_bp)
+app.register_blueprint(ui_bp)
 
 # start sync job status scheduler
-from ScrapyKeeper.app.schedulers.common import sync_job_execution_status_job, sync_spiders, \
+from SK4Me.app.schedulers.common import sync_job_execution_status_job, sync_spiders, \
     reload_runnable_spider_job_execution
 
 scheduler.add_job(sync_job_execution_status_job, 'interval', seconds=5, id='sys_sync_status')
@@ -126,7 +124,7 @@ def init_sentry():
     if not app.config.get('NO_SENTRY'):
         import sentry_sdk
         from sentry_sdk.integrations.flask import FlaskIntegration
-        sentry_sdk.init( dsn="https://5c1450ef1eeb45f3acfc6cc0eae47ce7@sentry.io/1301690", integrations=[FlaskIntegration()] )
+        sentry_sdk.init(dsn="https://5c1450ef1eeb45f3acfc6cc0eae47ce7@sentry.io/1301690", integrations=[FlaskIntegration()])
         app.logger.info('Starting with sentry.io error reporting')
 
 

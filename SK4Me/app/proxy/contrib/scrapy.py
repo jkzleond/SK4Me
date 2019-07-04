@@ -2,9 +2,9 @@ import datetime, time
 
 import requests
 
-from ScrapyKeeper.app.proxy.spiderctrl import SpiderServiceProxy
-from ScrapyKeeper.app.spider.model import SpiderStatus, Project, SpiderInstance
-from ScrapyKeeper.app.util.http import request
+from SK4Me.app.proxy.spiderctrl import SpiderServiceProxy
+from SK4Me.app.spider.model import SpiderStatus, Project, SpiderInstance
+from SK4Me.app.util.http import request
 
 
 class ScrapydProxy(SpiderServiceProxy):

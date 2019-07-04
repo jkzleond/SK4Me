@@ -3,7 +3,7 @@ import demjson
 import numpy as np
 import re
 from sqlalchemy import desc
-from ScrapyKeeper.app import db, Base
+from SK4Me.app import db, Base
 
 
 class Project(Base):
@@ -327,11 +327,12 @@ class JobExecution(Base):
             time_tmp = datetime.datetime.now() - datetime.timedelta(hours=hour)
             hour_key = time_tmp.strftime('%Y-%m-%d %H:00:00')
             hour_keys.append(hour_key)
-            result[hour_key] = 0  # init
+            result[hour_key] = dict(items_count=0, spiders_count=0) # init
         for job_execution in JobExecution.query.filter(JobExecution.project_id == project_id,
                                                        JobExecution.date_created >= last_time).all():
             hour_key = job_execution.create_time.strftime('%Y-%m-%d %H:00:00')
-            result[hour_key] += job_execution.items_count
+            result[hour_key]['items_count'] += job_execution.items_count
+            result[hour_key]['spiders_count'] += 1
         return [dict(key=hour_key, value=result[hour_key]) for hour_key in hour_keys]
 
     @classmethod

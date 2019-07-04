@@ -1,8 +1,8 @@
 import threading
 import time
 
-from ScrapyKeeper.app import scheduler, app, agent, db
-from ScrapyKeeper.app.spider.model import Project, JobInstance, SpiderInstance
+from SK4Me.app import scheduler, app, agent, db
+from SK4Me.app.spider.model import Project, JobInstance, SpiderInstance
 
 
 def sync_job_execution_status_job():
